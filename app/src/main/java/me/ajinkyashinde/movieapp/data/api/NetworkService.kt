@@ -20,4 +20,10 @@ interface NetworkService {
         @Path("movieId") movieId: String,
         @Query("api_key") api_key: String
     ): MovieDetailsResponse
+
+    @GET("search/movie")
+    suspend fun getSearchMovieList(
+        @Query("query") query: String,
+        @Query("api_key") api_key: String
+    ): MovieResponse
 }

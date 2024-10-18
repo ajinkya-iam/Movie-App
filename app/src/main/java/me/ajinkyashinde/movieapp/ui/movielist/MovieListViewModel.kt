@@ -21,11 +21,7 @@ class MovieListViewModel @Inject constructor(private val mainRepository: MainRep
 
     val uiState: StateFlow<UiState<List<MovieDetails>>> = _uiState
 
-    init {
-        fetchDiscoverMovieList()
-    }
-
-    private fun fetchDiscoverMovieList(page: Int = DEFAULT_PAGE_INDEX) {
+    fun fetchDiscoverMovieList(page: Int = DEFAULT_PAGE_INDEX) {
         viewModelScope.launch {
             mainRepository.getDiscoverMovieList(apiKey = API_KEY, page = page)
                 .catch { e ->

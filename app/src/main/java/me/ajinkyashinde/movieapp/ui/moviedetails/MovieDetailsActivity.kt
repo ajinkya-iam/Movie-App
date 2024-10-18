@@ -1,11 +1,14 @@
 package me.ajinkyashinde.movieapp.ui.moviedetails
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +23,7 @@ import me.ajinkyashinde.movieapp.ui.base.UiState
 import me.ajinkyashinde.movieapp.ui.movielist.MovieListViewModel
 import me.ajinkyashinde.movieapp.utlis.AppConstant
 import me.ajinkyashinde.movieapp.utlis.AppConstant.MOVIE_ID_KEY
+import me.ajinkyashinde.movieapp.utlis.Helper
 
 @AndroidEntryPoint
 class MovieDetailsActivity : AppCompatActivity() {
@@ -32,10 +36,13 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private var movieId: String = ""
 
+    private lateinit var progressDialog : ProgressDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        progressDialog = ProgressDialog(this)
         if(intent.hasExtra(MOVIE_ID_KEY)) movieId = intent.getStringExtra(MOVIE_ID_KEY)!!
         setupViewModel()
         setupObserver()
@@ -43,7 +50,23 @@ class MovieDetailsActivity : AppCompatActivity() {
 
     private fun setupViewModel() {
         movieDetailsViewModel = ViewModelProvider(this)[MovieDetailsViewModel::class.java]
-        movieDetailsViewModel.getMovieDetails(movieId = movieId)
+        if (Helper.isInternetAvailable(this)) movieDetailsViewModel.getMovieDetails(movieId = movieId)
+        else {
+            val alertDialog = AlertDialog.Builder(this)
+                .setTitle("No Internet Connection")
+                .setMessage("Please check your internet connection and try again.")
+                .setIcon(R.drawable.baseline_wifi_off_24)
+                .setCancelable(false)
+                .setPositiveButton("Try Again") { dialog, _ ->
+                    if (Helper.isInternetAvailable(this)) {
+                        movieDetailsViewModel.getMovieDetails(movieId = movieId)
+                    } else {
+                        Helper.showInternetNotFoundDialog(this)
+                    }
+                }
+                .create()
+            alertDialog.show()
+        }
     }
 
     private fun setupObserver() {
@@ -52,17 +75,24 @@ class MovieDetailsActivity : AppCompatActivity() {
                 movieDetailsViewModel.uiState.collect {
                     when (it) {
                         is UiState.Success -> {
-//                            binding.progressBar.visibility = View.GONE
+                            progressDialog.dismiss()
                             setupUI(it.data)
                         }
                         is UiState.Loading -> {
-//                            binding.progressBar.visibility = View.VISIBLE
+                            progressDialog.setTitle("Loading...")
+                            progressDialog.show()
                         }
                         is UiState.Error -> {
-                            //Handle Error
-//                            binding.progressBar.visibility = View.GONE
-                            Toast.makeText(this@MovieDetailsActivity, it.message, Toast.LENGTH_LONG)
-                                .show()
+                            progressDialog.dismiss()
+                            val alertDialog = AlertDialog.Builder(this@MovieDetailsActivity)
+                                .setTitle("Failed fetch data")
+                                .setMessage(it.message)
+                                .setCancelable(false)
+                                .setPositiveButton("Close") { dialog, _ ->
+                                    onBackPressed()
+                                }
+                                .create()
+                            alertDialog.show()
                         }
                     }
                 }

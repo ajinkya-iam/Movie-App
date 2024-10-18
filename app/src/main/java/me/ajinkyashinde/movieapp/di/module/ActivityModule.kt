@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.scopes.ActivityScoped
 import me.ajinkyashinde.movieapp.ui.movielist.MovieListAdapter
+import me.ajinkyashinde.movieapp.ui.searchmovie.SearchMovieListAdapter
 
 
 @Module
@@ -15,5 +16,9 @@ class ActivityModule {
     @ActivityScoped
     @Provides
     fun provideMovieListAdapter() = MovieListAdapter(ArrayList())
+
+    @ActivityScoped
+    @Provides
+    fun provideSearchMovieListAdapter() = SearchMovieListAdapter(ArrayList())
 
 }

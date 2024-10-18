@@ -26,4 +26,12 @@ class MainRepository @Inject constructor(private val networkService: NetworkServ
             it
         }
     }
+
+    fun getSearchMovieList(query: String, apiKey: String): Flow<List<MovieDetails>> {
+        return flow {
+            emit(networkService.getSearchMovieList(query, apiKey))
+        }.map {
+            it.results
+        }
+    }
 }
