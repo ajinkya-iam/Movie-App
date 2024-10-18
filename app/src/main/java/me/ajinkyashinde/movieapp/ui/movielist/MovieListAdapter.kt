@@ -1,7 +1,10 @@
 package me.ajinkyashinde.movieapp.ui.movielist
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import me.ajinkyashinde.movieapp.data.model.MovieDetails
@@ -12,17 +15,28 @@ class MovieListAdapter(
     private val movieList: ArrayList<MovieDetails>
 ) : RecyclerView.Adapter<MovieListAdapter.DataViewHolder>() {
 
+    interface ItemClickListener {
+        fun onClickItem(view: View?, position: Int, movieDetails: MovieDetails?)
+    }
+
+    companion object {
+        var mClickListener: ItemClickListener? = null
+    }
+
+
     class DataViewHolder(private val binding: ItemDiscoverMovieBinding) :
         RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bind(movieDetails: MovieDetails) {
             binding.tvMovieName.text = movieDetails.originalTitle
             binding.tvMovieDetails.text = movieDetails.overview
-            binding.tvMovieDate.text = movieDetails.releaseDate
+            binding.tvMovieDate.text = "Release Date : ${movieDetails.releaseDate}"
             Glide.with(binding.ivImage.context)
                 .load(BASE_POSTER_PATH + movieDetails.posterPath)
                 .into(binding.ivImage)
             itemView.setOnClickListener {
-
+                it.startAnimation(AlphaAnimation(3f, 0.2f))
+                mClickListener?.onClickItem(it, position, movieDetails = movieDetails)
             }
         }
     }
@@ -43,6 +57,10 @@ class MovieListAdapter(
 
     fun addData(list: List<MovieDetails>) {
         movieList.addAll(list)
+    }
+
+    fun setClickListener(itemClickListener: ItemClickListener?) {
+        mClickListener = itemClickListener
     }
 
 }

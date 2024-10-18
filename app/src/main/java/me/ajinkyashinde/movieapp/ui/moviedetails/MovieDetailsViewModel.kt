@@ -1,4 +1,4 @@
-package me.ajinkyashinde.movieapp.ui.movielist
+package me.ajinkyashinde.movieapp.ui.moviedetails
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,27 +7,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import me.ajinkyashinde.movieapp.data.model.MovieDetails
+import me.ajinkyashinde.movieapp.data.model.MovieDetailsResponse
 import me.ajinkyashinde.movieapp.data.repository.MainRepository
 import me.ajinkyashinde.movieapp.ui.base.UiState
 import me.ajinkyashinde.movieapp.utlis.AppConstant.API_KEY
-import me.ajinkyashinde.movieapp.utlis.AppConstant.DEFAULT_PAGE_INDEX
 import javax.inject.Inject
 
 @HiltViewModel
-class MovieListViewModel @Inject constructor(private val mainRepository: MainRepository) :
+class MovieDetailsViewModel @Inject constructor(private val mainRepository: MainRepository) :
     ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<List<MovieDetails>>>(UiState.Loading)
+    private val _uiState = MutableStateFlow<UiState<MovieDetailsResponse>>(UiState.Loading)
 
-    val uiState: StateFlow<UiState<List<MovieDetails>>> = _uiState
+    val uiState: StateFlow<UiState<MovieDetailsResponse>> = _uiState
 
-    init {
-        fetchDiscoverMovieList()
-    }
-
-    private fun fetchDiscoverMovieList(page: Int = DEFAULT_PAGE_INDEX) {
+    fun getMovieDetails(movieId: String) {
         viewModelScope.launch {
-            mainRepository.getDiscoverMovieList(apiKey = API_KEY, page = page)
+            mainRepository.getMovieDetails(movieId = movieId, apiKey = API_KEY)
                 .catch { e ->
                     _uiState.value = UiState.Error(e.toString())
                 }.collect {
@@ -35,5 +30,4 @@ class MovieListViewModel @Inject constructor(private val mainRepository: MainRep
                 }
         }
     }
-
 }

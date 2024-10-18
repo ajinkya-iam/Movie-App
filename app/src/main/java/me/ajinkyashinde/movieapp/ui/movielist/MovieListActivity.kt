@@ -1,5 +1,6 @@
 package me.ajinkyashinde.movieapp.ui.movielist
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -15,6 +16,8 @@ import kotlinx.coroutines.launch
 import me.ajinkyashinde.movieapp.data.model.MovieDetails
 import me.ajinkyashinde.movieapp.databinding.ActivityMovieListBinding
 import me.ajinkyashinde.movieapp.ui.base.UiState
+import me.ajinkyashinde.movieapp.ui.moviedetails.MovieDetailsActivity
+import me.ajinkyashinde.movieapp.utlis.AppConstant.MOVIE_ID_KEY
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -42,13 +45,18 @@ class MovieListActivity : AppCompatActivity() {
     private fun setupUI() {
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.addItemDecoration(
-            DividerItemDecoration(
-                recyclerView.context,
-                (recyclerView.layoutManager as LinearLayoutManager).orientation
-            )
-        )
         recyclerView.adapter = adapter
+
+        adapter.setClickListener(object : MovieListAdapter.ItemClickListener {
+            override fun onClickItem(view: View?, position: Int, movieDetails: MovieDetails?) {
+                val intent = Intent(
+                    this@MovieListActivity,
+                    MovieDetailsActivity::class.java
+                )
+                intent.putExtra(MOVIE_ID_KEY, movieDetails?.id.toString())
+                startActivity(intent)
+            }
+        })
     }
 
     private fun setupObserver() {
@@ -61,10 +69,12 @@ class MovieListActivity : AppCompatActivity() {
                             renderList(it.data)
                             binding.recyclerView.visibility = View.VISIBLE
                         }
+
                         is UiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
                             binding.recyclerView.visibility = View.GONE
                         }
+
                         is UiState.Error -> {
                             //Handle Error
                             binding.progressBar.visibility = View.GONE
