@@ -8,6 +8,7 @@
 - Flows
 - Stateflow
 - Viewbinding
+- Pagination
 
 ![image](https://github.com/user-attachments/assets/3e6a2500-283e-4d71-a0c4-121892a4f73f)
 
@@ -19,6 +20,7 @@
   - Filter
   - DistinctUntilChanged
   - FlatMapLatest
+- Pagination
 
 ## Dependency Used
 - Retrofit for networking
@@ -38,6 +40,11 @@ implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
 ```
 implementation "com.google.dagger:hilt-android:2.44"
 kapt "com.google.dagger:hilt-compiler:2.44"
+```
+
+- Pagination
+```
+implementation "androidx.paging:paging-runtime:3.1.1"
 ```
 
 ## How to Run the Project
