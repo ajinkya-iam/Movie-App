@@ -15,6 +15,7 @@
         android:elevation="4dp"
         android:iconifiedByDefault="false"
         android:queryHint="Search movies..."
+        android:queryBackground="@android:color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

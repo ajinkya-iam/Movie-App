@@ -15,7 +15,7 @@ class ActivityModule {
 
     @ActivityScoped
     @Provides
-    fun provideMovieListAdapter() = MovieListAdapter(ArrayList())
+    fun provideMovieListAdapter() = MovieListAdapter()
 
     @ActivityScoped
     @Provides
