@@ -10,8 +10,6 @@
 - Viewbinding
 - Pagination
 
-![image](https://github.com/user-attachments/assets/3e6a2500-283e-4d71-a0c4-121892a4f73f)
-
 ## Features Implemented
 - Fetching Movies list
 - Movie details
